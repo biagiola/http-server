@@ -1,5 +1,5 @@
 -- Your SQL goes here
-CREATE TABLE creates (
+CREATE TABLE crates (
     id SERIAL PRIMARY KEY,
     rustacean_id INTEGER NOT NULL REFERENCES rustaceans(id),
     code VARCHAR(64) NOT NULL,
