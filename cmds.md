@@ -19,3 +19,13 @@ docker compose exec app diesel migration run
 
 // if we need to revert the migration
 docker compose exec app diesel migration revert
+
+// build and start server
+docker compose exec app cargo build
+docker compose exec app cargo run
+
+// test the endpoint inside the container
+docker compose exec app curl 127.0.0.1:8000/rustaceans
+
+// test non-existing endpoint with header to see better response
+docker compose exec app curl localhost:8000/rustaceansasdf -H 'Accept: application/json'
