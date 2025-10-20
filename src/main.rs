@@ -1,4 +1,9 @@
 use rocket_db_pools::{Connection, Database};
+use rocket::http::Status;
+use rocket::response::status::Custom;
+use rocket::serde::json::json;
+use rocket::serde::json::Value;
+use crate::repositories::RustaceanRepository;
 
 mod models;
 mod schema;
@@ -9,8 +14,10 @@ mod repositories;
 struct DbConn(rocket_db_pools::diesel::PgPool);
 
 #[rocket::get("/rustaceans")]
-fn get_rustaceans(db: Connection<DbConn>) {
-    // make database queries here
+async fn get_rustaceans(mut db: Connection<DbConn>) -> Result<Value, Custom<Value>> {
+    RustaceanRepository::find_multiple(&mut db, 100).await
+        .map(|rustaceans| json!(rustaceans))
+        .map_err(|_| Custom(Status::InternalServerError, json!("Error")))
 }
 
 #[rocket::main]
