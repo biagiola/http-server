@@ -6,7 +6,8 @@ use crate::schema::*;
 pub struct Rustacean {
     pub id: i32,
     pub name: String,
-    pub created_ad: NaiveDateTime
+    pub email: String,
+    pub created_at: NaiveDateTime
 }
 
 #[derive(Insertable)]
