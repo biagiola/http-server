@@ -29,3 +29,6 @@ docker compose exec app curl 127.0.0.1:8000/rustaceans
 
 // test non-existing endpoint with header to see better response
 docker compose exec app curl localhost:8000/rustaceansasdf -H 'Accept: application/json'
+
+// if we add new stuff on the docker-compose.yml we need to update the container
+docker compose up -d
