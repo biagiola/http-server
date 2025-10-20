@@ -32,3 +32,23 @@ docker compose exec app curl localhost:8000/rustaceansasdf -H 'Accept: applicati
 
 // if we add new stuff on the docker-compose.yml we need to update the container
 docker compose up -d
+
+// enter into the container
+docker compose exec app bash
+
+// make a post request
+curl 127.0.0.1:8000/rustaceans -H 'Content-type:  application/json' -d '{"name": "John Doe", "email":"johndoe@gmail.com"}'
+
+// list recent post request
+curl 127.0.0.1:8000/rustaceans/1
+
+// update request
+// first H header is for the request and the second is for
+// the format response
+curl 127.0.0.1:8000/rustaceans/1 -X PUT
+-H 'Content-type: application/json'
+-H 'Accept: application/json'
+-d '{"name": "John Doe2", "email":"johndoe@gmail.com"}'
+
+// delete request
+curl 127.0.0.1:8000/rustaceans/1 -X DELETE
