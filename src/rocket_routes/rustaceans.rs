@@ -38,5 +38,5 @@ pub async fn update_rustacean(mut db: Connection<DbConn>, id: i32, rustacean: Js
 pub async fn delete_rustacean(mut db: Connection<DbConn>, id: i32) -> Result<NoContent, Custom<Value>> {
     RustaceanRepository::delete(&mut db, id).await
         .map(|_| NoContent)
-        .map_err(|_| Custom(Status::InternalServerError, json!("Error")))
+        .map_err(|e| Custom(Status::InternalServerError, json!("Error")))
 }

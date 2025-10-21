@@ -52,3 +52,6 @@ curl 127.0.0.1:8000/rustaceans/1 -X PUT
 
 // delete request
 curl 127.0.0.1:8000/rustaceans/1 -X DELETE
+
+// run our cargo test
+docker compose exec app cargo test
