@@ -3,20 +3,6 @@ mod schema;
 mod repositories;
 mod rocket_routes;
 
-use rocket_routes::rustaceans::{
-    get_rustaceans,
-    view_rustacean,
-    create_rustacean,
-    update_rustacean,
-    delete_rustacean,
-};
-use rocket_routes::crates::{
-    get_crates,
-    view_crate,
-    create_crate,
-    update_crate,
-    delete_crate,
-};
 use rocket_db_pools::Database;
 
 #[derive(Database)]
@@ -27,18 +13,18 @@ struct DbConn(rocket_db_pools::diesel::PgPool);
 async fn main() {
     let _ = rocket::build()
         .mount("/", rocket::routes![
-            get_rustaceans,
-            view_rustacean,
-            create_rustacean,
-            update_rustacean,
-            delete_rustacean,
-            get_crates,
-            view_crate,
-            create_crate,
-            update_crate,
-            delete_crate,
+            rocket_routes::rustaceans::get_rustaceans,
+            rocket_routes::rustaceans::view_rustacean,
+            rocket_routes::rustaceans::create_rustacean,
+            rocket_routes::rustaceans::update_rustacean,
+            rocket_routes::rustaceans::delete_rustacean,
+            rocket_routes::crates::get_crates,
+            rocket_routes::crates::view_crate,
+            rocket_routes::crates::create_crate,
+            rocket_routes::crates::update_crate,
+            rocket_routes::crates::delete_crate,
         ])
-        .attach(DbConn::init())
+        .attach(crate::rocket_routes::DbConn::init())
         .launch()
         .await;
 }
