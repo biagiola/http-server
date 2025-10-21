@@ -14,5 +14,12 @@ pub struct DbConn(rocket_db_pools::diesel::PgPool);
 
 pub fn server_error(e: Box<dyn Error>) -> Custom<Value> {
     rocket::error!("{}", e);
+    eprintln!("######");
+    eprintln!("{}", e);
+
+    if e.to_string() == "Record not found" {
+        return Custom(Status::NotFound, json!("Error"))
+    }
+
     Custom(Status::InternalServerError, json!("Error"))
 }
