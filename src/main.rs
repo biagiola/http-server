@@ -10,7 +10,13 @@ use rocket_routes::rustaceans::{
     update_rustacean,
     delete_rustacean,
 };
-
+use rocket_routes::crates::{
+    get_crates,
+    view_crate,
+    create_crate,
+    update_crate,
+    delete_crate,
+};
 use rocket_db_pools::Database;
 
 #[derive(Database)]
@@ -26,6 +32,11 @@ async fn main() {
             create_rustacean,
             update_rustacean,
             delete_rustacean,
+            get_crates,
+            view_crate,
+            create_crate,
+            update_crate,
+            delete_crate,
         ])
         .attach(DbConn::init())
         .launch()

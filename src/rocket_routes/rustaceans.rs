@@ -4,9 +4,7 @@ use crate::DbConn;
 use rocket_db_pools::Connection;
 use rocket::http::Status;
 use rocket::response::status::{Custom, NoContent};
-use rocket::serde::json::{Json, json};
-
-use rocket::serde::json::Value;
+use rocket::serde::json::{Json, json, Value};
 
 #[rocket::get("/rustaceans")]
 pub async fn get_rustaceans(mut db: Connection<DbConn>) -> Result<Value, Custom<Value>> {
@@ -39,6 +37,6 @@ pub async fn update_rustacean(mut db: Connection<DbConn>, id: i32, rustacean: Js
 #[rocket::delete("/rustaceans/<id>")]
 pub async fn delete_rustacean(mut db: Connection<DbConn>, id: i32) -> Result<NoContent, Custom<Value>> {
     RustaceanRepository::delete(&mut db, id).await
-        .map(|rustacean| NoContent)
+        .map(|_| NoContent)
         .map_err(|_| Custom(Status::InternalServerError, json!("Error")))
 }
