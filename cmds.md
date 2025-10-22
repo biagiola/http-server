@@ -55,3 +55,11 @@ curl 127.0.0.1:8000/rustaceans/1 -X DELETE
 
 // run our cargo test
 docker compose exec app cargo test
+
+// Roles migrations
+docker compose exec app diesel migration generate create_users
+docker compose exec app dielse migration generate create_roles
+docker compose exec app dielse migration generate create_user_roles
+
+docker compose exec app diesel migration run
+docker compose exec app diesel migration revert
