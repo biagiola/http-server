@@ -63,3 +63,11 @@ docker compose exec app dielse migration generate create_user_roles
 
 docker compose exec app diesel migration run
 docker compose exec app diesel migration revert
+
+// now that we create a cli and server binary we need to run our backend in a different way
+docker compose exec app cargo run --bin server
+
+// we can set a default binary to rustaceans adding `default-run` to our manifest key (Cargo.toml)
+
+// create a user using the cli (make sure to run migrations before execute the command)
+docker compose exec app cargo run --bin cli users create david pass123456 admin
