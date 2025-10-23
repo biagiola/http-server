@@ -3,6 +3,7 @@ use rocket::http::Status;
 use rocket::response::status::Custom;
 use rocket::serde::json::{json, Value};
 
+pub mod authorization;
 pub mod rustaceans;
 pub mod crates;
 
@@ -21,13 +22,3 @@ pub fn server_error(e: Box<dyn Error>) -> Custom<Value> {
 
     Custom(Status::InternalServerError, json!("Error"))
 }
-
-// #[rocket::get("/rustaceans/<id>")]
-// pub async fn view_rustacean(mut db: Connection<DbConn>, id: i32) -> Result<Value, Custom<Value>> {
-//     RustaceanRepository::find(&mut db, id).await
-//         .map(|rustacean| json!(rustacean))
-//         .map_err(|e| match e {
-//             diesel::result::Error::NotFound => Custom(Status::NotFound, json!("Not found")),
-//             _ => server_error(e.into())
-//         })
-// }
