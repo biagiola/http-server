@@ -71,3 +71,9 @@ docker compose exec app cargo run --bin server
 
 // create a user using the cli (make sure to run migrations before execute the command)
 docker compose exec app cargo run --bin cli users create david pass123456 admin
+
+// list created users
+docker compose exec app cargo run --bin cli users list
+
+// delete created user
+docker compose exec app cargo run --bin cli users delete 2
