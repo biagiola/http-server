@@ -18,6 +18,7 @@ async fn main() {
             cr8s::rocket_routes::crates::update_crate,
             cr8s::rocket_routes::crates::delete_crate,
         ])
+        .attach(cr8s::rocket_routes::CacheConn::init())
         .attach(cr8s::rocket_routes::DbConn::init())
         .launch()
         .await;
