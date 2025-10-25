@@ -1,6 +1,8 @@
 use diesel::prelude::*;
 use diesel_async::{AsyncPgConnection, RunQueryDsl};
-
+use rocket_db_pools::deadpool_redis::redis::AsyncCommands;
+use rocket_db_pools::{Connection, deadpool_redis::redis::RedisError};
+use crate::routes::CacheConn;
 use crate::schema::*;
 use crate::models::*;
 
@@ -159,5 +161,40 @@ impl RoleRepository {
             .values(new_role)
             .get_result(c)
             .await
+    }
+}
+
+pub struct RedisRepository;
+
+impl RedisRepository {
+    pub async fn create_session(
+        cache: &mut Connection<CacheConn>,
+        session_id: String,
+        user_id: i32,
+        ttl: usize
+    ) -> Result<(), RedisError> {
+        cache.set_ex::<String, i32, ()>(
+            format!("sessions/{}", session_id),
+            user_id,
+            ttl
+        ).await
+    }
+
+    pub async fn get_session(
+        cache: &mut Connection<CacheConn>,
+        session_id: String
+    ) -> Result<i32, RedisError> {
+        cache.get::<String, i32>(
+            format!("sessions/{}", session_id)
+        ).await
+    }
+
+    pub async fn delete_session(
+        cache: &mut Connection<CacheConn>,
+        session_id: String
+    ) -> Result<(), RedisError> {
+        cache.del::<String, ()>(
+            format!("sessions/{}", session_id)
+        ).await
     }
 }

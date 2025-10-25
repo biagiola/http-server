@@ -1,6 +1,6 @@
 use crate::models::{Crate, NewCrate};
 use crate::repositories::CrateRepository;
-use crate::rocket_routes::{DbConn, server_error};
+use crate::routes::{DbConn, server_error};
 use rocket_db_pools::Connection;
 use rocket::http::Status;
 use rocket::response::status::{Custom, NoContent};
