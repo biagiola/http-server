@@ -1,9 +1,10 @@
+use std::str::FromStr;
 
 use diesel_async::{AsyncConnection, AsyncPgConnection};
 
 use crate::auth;
-use crate::models::NewUser;
-use crate::repositories::{RoleRepository, UserRepository};
+use crate::models::{NewUser, Role, RoleCode};
+use crate::repositories::UserRepository;
 
 async fn load_db_connection() -> AsyncPgConnection {
     let database_url = std::env::var("DATABASE_URL")
@@ -20,10 +21,12 @@ pub async fn create_user(
     let mut c = load_db_connection().await;
 
     let hashed_password = auth::hash_password(password).unwrap();
-
     let new_user = NewUser { username, password: hashed_password };
-    let user = UserRepository::create(&mut c, new_user, role_codes).await.unwrap();
-    println!("User created {:?}", user);
+
+    let role_enums = role_codes.iter().map(|v| RoleCode::from_str(v.as_str()).unwrap()).collect();
+
+    let user = UserRepository::create(&mut c, new_user, role_enums).await.unwrap();
+    println!("User created {:?}", user);    
 }
 
 pub async fn list_users() {
