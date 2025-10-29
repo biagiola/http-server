@@ -11,8 +11,13 @@ pub async fn login(mut db: Connection<DbConn>, mut cache: Connection<CacheConn>,
     let user = UserRepository::find_by_username(&mut db, &credentials.username).await
         .map_err(|e| server_error(e.into()))?;
 
+    let user = match user {
+        Some(user) => user,
+        None => return Err(Custom(Status::Unauthorized, json!("Invalid username or password")))
+    };
+
     let session_id = authorize_user(&user, credentials.into_inner())
-        .map_err(|_|Custom(Status::Unauthorized, json!("Unauthorized")))?;
+        .map_err(|_|Custom(Status::Unauthorized, json!("Invalid username or password")))?;
 
     // Create session in Redis with 3 hour TTL
     RedisRepository::create_session(&mut cache, session_id.clone(), user.id, 3*60*60).await

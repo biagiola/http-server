@@ -1,4 +1,4 @@
-use crate::models::{Crate, NewCrate};
+use crate::models::{Crate, NewCrate, User};
 use crate::repositories::CrateRepository;
 use crate::routes::{DbConn, server_error};
 use rocket_db_pools::Connection;
@@ -7,7 +7,7 @@ use rocket::response::status::{Custom, NoContent};
 use rocket::serde::json::{Json, json, Value};
 
 #[rocket::get("/crates")]
-pub async fn get_crates(mut db: Connection<DbConn>) -> Result<Value, Custom<Value>> {
+pub async fn get_crates(mut db: Connection<DbConn>, _user: User) -> Result<Value, Custom<Value>> {
     CrateRepository::find_multiple(&mut db, 100).await
         .map(|crates| json!(crates))
         .map_err(|e| server_error(e.into()))

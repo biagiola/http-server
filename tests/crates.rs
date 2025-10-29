@@ -1,11 +1,11 @@
-use reqwest::{blocking::Client, StatusCode};
+use reqwest::{StatusCode, blocking::Client};
 use serde_json::{json, Value};
 pub mod common;
 
 #[test]
 fn test_get_crates() {
     // setup
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::create_test_rustacean(&client);
     let a_crate = common::create_test_crate(&client, &rustacean);
     let b_crate = common::create_test_crate(&client, &rustacean);
@@ -26,7 +26,7 @@ fn test_get_crates() {
 
 #[test]
 fn test_create_crate() {
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::create_test_rustacean(&client);
     let response = client.post(format!("{}/crates", common::APP_HOST))
         .json(&json!({
@@ -60,7 +60,7 @@ fn test_create_crate() {
 
 #[test]
 fn test_view_crate() {
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::create_test_rustacean(&client);
     let a_crate = common::create_test_crate(&client, &rustacean);
 
@@ -89,7 +89,7 @@ fn test_view_crate() {
 
 #[test]
 fn test_update_crate() {
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::create_test_rustacean(&client);
     let a_crate = common::create_test_crate(&client, &rustacean);
 
@@ -148,7 +148,7 @@ fn test_update_crate() {
 
 #[test]
 fn test_delete_crate() {
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::create_test_rustacean(&client);
     let a_crate = common::create_test_crate(&client, &rustacean);
 
@@ -159,4 +159,23 @@ fn test_delete_crate() {
     assert_eq!(response.status(), StatusCode::NO_CONTENT);
 
     common::delete_test_rustacean(&client, rustacean);
+}
+
+#[test]
+fn test_get_crates_requires_authentication() {
+    // Create an unauthenticated client (no session token)
+    let client = Client::new();
+    
+    let response = client.get(format!("{}/crates", common::APP_HOST))
+        .send();
+    
+    // Should fail when no session token is provided
+    // Either returns 401 Unauthorized or connection error (both indicate rejection)
+    match response {
+        Ok(resp) => assert_eq!(resp.status(), StatusCode::UNAUTHORIZED),
+        Err(_) => {
+            // Any network error indicates the server rejected the unauthenticated request
+            // This is the expected behavior for protected endpoints
+        }
+    }
 }

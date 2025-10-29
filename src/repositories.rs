@@ -1,4 +1,5 @@
 use diesel::prelude::*;
+use diesel::result::OptionalExtension;
 use diesel_async::{AsyncPgConnection, RunQueryDsl};
 use rocket_db_pools::deadpool_redis::redis::AsyncCommands;
 use rocket_db_pools::{Connection, deadpool_redis::redis::RedisError};
@@ -82,8 +83,12 @@ impl CrateRepository {
 pub struct UserRepository;
 
 impl UserRepository {
-    pub async fn find_by_username(c: &mut AsyncPgConnection, username: &String) -> QueryResult<User> {
-        users::table.filter(users::username.eq(username)).get_result(c).await
+        pub async fn find(c: &mut AsyncPgConnection, id: i32) -> QueryResult<User> {
+        users::table.find(id).get_result(c).await
+    }
+
+    pub async fn find_by_username(c: &mut AsyncPgConnection, username: &String) -> QueryResult<Option<User>> {
+        users::table.filter(users::username.eq(username)).get_result(c).await.optional()
     }
 
     pub async fn find_with_roles(c: &mut AsyncPgConnection) -> QueryResult<Vec<(User, Vec<(UserRole, Role)>)>> {
