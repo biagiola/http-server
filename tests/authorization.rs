@@ -18,7 +18,6 @@ fn test_login() {
         .output()
         .unwrap();
 
-    println!("{:?}", output);
 
     let client = Client::new();
 

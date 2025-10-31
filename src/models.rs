@@ -68,7 +68,7 @@ pub struct NewUser {
 pub struct Role {
     pub id: i32,
     pub name: String,
-    pub code: RoleCode,
+    pub code: RoleCode, // TODO: should named role not code
     pub created_at: NaiveDateTime
 }
 
@@ -76,7 +76,7 @@ pub struct Role {
 #[diesel(table_name=roles)]
 pub struct NewRole {
     pub name: String,
-    pub code: RoleCode,
+    pub code: RoleCode, // TODO: should named role not code
 }
 
 #[derive(Queryable, Debug, Associations, Identifiable)]
@@ -142,9 +142,9 @@ impl FromSql<Text, Pg> for RoleCode {
 impl ToSql<Text, Pg> for RoleCode {
     fn to_sql<'b>(&'b self, out: &mut diesel::serialize::Output<'b, '_, Pg>) -> diesel::serialize::Result {
         match self {
-            RoleCode::Admin => out.write(b"admin"),
-            RoleCode::Editor => out.write(b"editor"),
-            RoleCode::Viewer => out.write(b"viewer"),
+            RoleCode::Admin => out.write(b"admin")?,
+            RoleCode::Editor => out.write(b"editor")?,
+            RoleCode::Viewer => out.write(b"viewer")?,
         };
         Ok(diesel::serialize::IsNull::No)
     }

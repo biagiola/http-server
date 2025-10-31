@@ -3,7 +3,7 @@ use std::str::FromStr;
 use diesel_async::{AsyncConnection, AsyncPgConnection};
 
 use crate::auth;
-use crate::models::{NewUser, Role, RoleCode};
+use crate::models::{NewUser, RoleCode};
 use crate::repositories::UserRepository;
 
 async fn load_db_connection() -> AsyncPgConnection {
