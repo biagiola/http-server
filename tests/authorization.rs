@@ -20,8 +20,8 @@ fn test_login() {
 
 
     let client = Client::new();
-
-    // Test
+    
+    // make login request
     let response = client.post(format!("{}/login", common::APP_HOST))
         .json(&json!({
             "username": "test_admin",
@@ -30,11 +30,15 @@ fn test_login() {
         .send()
         .unwrap();
 
+    // validate http status
     assert_eq!(response.status(), StatusCode::OK);
+
+    // validate body response
     let json: Value = response.json().unwrap();
     assert!(json.get("token").is_some());
     assert_eq!(json["token"].as_str().unwrap().len(), 128);
 
+    // make login request with wrong credentials
     let response = client.post(format!("{}/login", common::APP_HOST))
         .json(&json!({
             "username": "test_admin",
@@ -45,5 +49,17 @@ fn test_login() {
 
     assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
 
-    // TODO: implement the cleanup of the created user
+
+    // Cleanup: Delete the created user
+    let output = Command::new("cargo")
+        .arg("run")
+        .arg("--bin")
+        .arg("cli")
+        .arg("users")
+        .arg("delete")
+        .arg("test_admin")
+        .output()
+        .expect("Failed to execute command.");
+
+    assert!(output.status.success());
 }
